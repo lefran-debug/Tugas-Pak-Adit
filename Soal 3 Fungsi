@@ -1,0 +1,13 @@
+public class HitungPromo {
+    // Fungsi menerima satu parameter harga dan mengembalikan harga * 2
+    public static int hitungPromo(int harga) {
+        return harga * 2;
+    }
+
+    public static void main(String[] args) {
+        // Menguji fungsi dengan parameter 75000
+        int totalPromo = hitungPromo(75000);
+        
+        System.out.println("Total Harga Promo: " + totalPromo);
+    }
+}

@@ -1,0 +1,8 @@
+public class NomorMejaVIP {
+    public static void main(String[] args) {
+        // For-loop dimulai dari 2, batas kurang dari 10, increment +2
+        for (int deret = 2; deret < 10; deret += 2) {
+            System.out.println("Nomor meja VIP: " + deret);
+        }
+    }
+}

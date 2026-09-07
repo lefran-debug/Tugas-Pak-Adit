@@ -1,0 +1,10 @@
+let darurat = ["Kebakaran", "Kecelakaan"];
+
+// Tambahkan "Medis Darurat" di posisi paling depan
+darurat.unshift("Medis Darurat");
+
+// Hapus elemen terdepan
+darurat.shift();
+
+// Tampilkan hasil akhir
+console.log(darurat); // Output: ["Kebakaran", "Kecelakaan"]

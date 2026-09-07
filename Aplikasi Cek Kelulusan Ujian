@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cek Kelulusan</title>
+</head>
+<body>
+
+    <p id="hasil"></p>
+
+    <script>
+        let nilaiUjian = 80;
+
+        let hasil = nilaiUjian >= 75
+            ? "Selamat, Anda Lulus!"
+            : "Maaf, Anda Belum Lulus.";
+
+        document.getElementById("hasil").textContent = hasil;
+        document.getElementById("hasil").style.color =
+            nilaiUjian >= 75 ? "green" : "red";
+    </script>
+
+</body>
+</html>
+

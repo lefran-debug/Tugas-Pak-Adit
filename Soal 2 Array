@@ -1,0 +1,6 @@
+let nilaiUjian = [78, 90, 65, 88, 92, 70];
+
+// Urutkan secara ascending (dari terkecil ke terbesar)
+nilaiUjian.sort((a, b) => a - b);
+
+console.log(nilaiUjian); // Output: [65, 70, 78, 88, 90, 92]

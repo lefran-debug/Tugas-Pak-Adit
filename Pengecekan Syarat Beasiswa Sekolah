@@ -1,0 +1,8 @@
+let isNilaiTinggi = true;
+let isJuaraLomba = false;
+
+let berhakBeasiswa = isNilaiTinggi || isJuaraLomba;
+
+console.log(`Status beasiswa: ${berhakBeasiswa}`);
+
+Status beasiswa: true

@@ -1,1 +1,10 @@
+let rawUsername = " admin_smkn10 ";
 
+let username = rawUsername.trim();
+let panjangUsername = username.length;
+
+console.log(`Username baru: ${username}`);
+console.log(`Panjang karakter: ${panjangUsername}`);
+
+Username baru: admin_smkn10
+Panjang karakter: 11

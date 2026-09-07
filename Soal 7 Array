@@ -1,0 +1,10 @@
+let judul = "belajar pemrograman perangkat bergerak smk";
+
+// Memecah string menjadi array kata-kata berdasarkan spasi
+let kataArray = judul.split(" ");
+
+// Menggabungkan kembali array menjadi string dengan pemisah "-"
+let slug = kataArray.join("-");
+
+console.log(slug); 
+// Output: "belajar-pemrograman-perangkat-bergerak-smk"

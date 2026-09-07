@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Peringatan Cuaca</title>
+</head>
+<body>
+
+    <script>
+        let suhuUdara = 38;
+
+        if (suhuUdara > 35 && suhuUdara <= 100) {
+            alert("Peringatan: Cuaca Sangat Panas Hari Ini!");
+        }
+    </script>
+
+</body>
+</html>
+
+suhuUdara > 35 && suhuUdara <= 100
+
+if (suhuUdara > 35 && true) {
+    alert("Peringatan: Cuaca Sangat Panas Hari Ini!");
+}

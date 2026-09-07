@@ -1,0 +1,11 @@
+public class SapaanHarian {
+    // Membuat fungsi tampilkanPesan() tanpa parameter
+    public static void tampilkanPesan() {
+        System.out.println("Selamat Datang di Aplikasi Mobile SMK!");
+    }
+
+    public static void main(String[] args) {
+        // Memanggil fungsi
+        tampilkanPesan();
+    }
+}

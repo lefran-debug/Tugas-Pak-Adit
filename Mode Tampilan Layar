@@ -1,0 +1,20 @@
+public class ModeTampilan {
+    public static void main(String[] args) {
+        boolean isDarkMode = true; // Ganti ke false untuk tes mode terang
+
+        String bgColor;
+        String textColor;
+
+        if (isDarkMode) {
+            bgColor = "#121212";
+            textColor = "putih"; // atau "#FFFFFF"
+        } else {
+            bgColor = "#FFFFFF";
+            textColor = "hitam"; // atau "#000000"
+        }
+
+        System.out.println("Mode Dark: " + isDarkMode);
+        System.out.println("Warna Latar Belakang: " + bgColor);
+        System.out.println("Warna Teks: " + textColor);
+    }
+}

@@ -1,0 +1,4 @@
+let gudang = [101, 102, 103, 104, 105];
+
+// Akses dan tampilkan elemen pada indeks ke-4
+console.log(gudang[4]); // Output: 105

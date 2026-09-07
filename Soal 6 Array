@@ -1,0 +1,7 @@
+let menu = ["Burger", "Pizza", "Hotdog", "Pasta"];
+
+// Menghapus 1 elemen dari indeks ke-2 ("Hotdog") dan menyisipkan "Spaghetti" & "Salad"
+menu.splice(2, 1, "Spaghetti", "Salad");
+
+console.log(menu); 
+// Output: ["Burger", "Pizza", "Spaghetti", "Salad", "Pasta"]

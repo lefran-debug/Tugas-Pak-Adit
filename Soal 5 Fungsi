@@ -1,0 +1,10 @@
+// Fungsi dengan default parameter tarif = 5000
+function hitungOngkir(jarak, tarif = 5000) {
+    return jarak * tarif;
+}
+
+// Skenario 1: Mengirim dua parameter (3, 7000)
+console.log("Skenario 1 (3 km, tarif 7000): " + hitungOngkir(3, 7000)); // Hasil: 21000
+
+// Skenario 2: Hanya mengirim satu parameter (4)
+console.log("Skenario 2 (4 km, default tarif): " + hitungOngkir(4)); // Hasil: 20000

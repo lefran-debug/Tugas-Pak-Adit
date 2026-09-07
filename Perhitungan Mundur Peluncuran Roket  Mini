@@ -1,0 +1,11 @@
+public class PeluncuranRoket {
+    public static void main(String[] args) {
+        // For-loop hitung mundur dari 5 ke 1
+        for (int i = 5; i >= 1; i--) {
+            System.out.println(i);
+        }
+
+        // Teks penutup setelah perulangan selesai
+        System.out.println("Roket Meluncur!");
+    }
+}

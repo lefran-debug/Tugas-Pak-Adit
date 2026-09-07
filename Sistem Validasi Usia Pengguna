@@ -1,0 +1,11 @@
+let inputUsia = "17";
+let syaratUsia = 17;
+
+let hasilStrictEqual = inputUsia === syaratUsia;
+let hasilPerbandingan = inputUsia >= syaratUsia;
+
+console.log(`Hasil === : ${hasilStrictEqual}`);
+console.log(`Hasil >= : ${hasilPerbandingan}`);
+
+Hasil === : false
+Hasil >= : true

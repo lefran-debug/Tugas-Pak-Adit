@@ -1,0 +1,15 @@
+public class RekomendasiFilm {
+    public static void main(String[] args) {
+        int usiaPenonton = 15; // Ganti nilainya untuk tes (misal: 10, 15, atau 20)
+
+        if (usiaPenonton < 13) {
+            System.out.println("Kategori: Semua Umur (SU)");
+        } else if (usiaPenonton >= 13 && usiaPenonton <= 17) {
+            System.out.println("Kategori: Remaja (R)");
+        } else if (usiaPenonton > 17) {
+            System.out.println("Kategori: Dewasa (D)");
+        } else {
+            System.out.println("Usia tidak valid");
+        }
+    }
+}

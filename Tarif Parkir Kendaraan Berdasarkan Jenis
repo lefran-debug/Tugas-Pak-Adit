@@ -1,0 +1,13 @@
+public class TarifParkir {
+    public static void main(String[] args) {
+        String jenisKendaraan = "Mobil"; // Ganti dengan "Motor" atau yang lain untuk tes
+
+        if (jenisKendaraan.equalsIgnoreCase("Mobil")) {
+            System.out.println("Tarif Parkir: Rp 5.000 / jam");
+        } else if (jenisKendaraan.equalsIgnoreCase("Motor")) {
+            System.out.println("Tarif Parkir: Rp 2.000 / jam");
+        } else {
+            System.out.println("Jenis kendaraan tidak dikenal");
+        }
+    }
+}

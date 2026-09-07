@@ -1,0 +1,11 @@
+public class AntreanBank {
+    public static void main(String[] args) {
+        int flag = 1; // Menggunakan int di Java (bisa diubah nama tipe datanya sesuai konvensi Java)
+
+        // While-loop berjalan selama nilai flag kurang dari 10
+        while (flag < 10) {
+            System.out.println("Memanggil nasabah antrean ke-" + flag);
+            flag++; // Increment agar tidak terjadi infinite loop
+        }
+    }
+}

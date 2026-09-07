@@ -1,1 +1,11 @@
+let hargaStr = "150000.50";
+let harga = Number(hargaStr);
 
+let jumlahStokStr = "25";
+let jumlahStok = parseInt(jumlahStokStr);
+
+let total = harga * jumlahStok;
+
+console.log(`Total harga: ${total}`);
+
+Total harga: 3750012.5

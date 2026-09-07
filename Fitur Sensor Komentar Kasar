@@ -1,1 +1,10 @@
+let komentar = "Wah, aplikasi ini sangat lambat dan buruk!";
 
+let posisiBuruk = komentar.indexOf("buruk");
+let potonganKalimat = komentar.substring(0, 19);
+
+console.log(`Posisi indeks kata "buruk": ${posisiBuruk}`);
+console.log(`Potongan kalimat: ${potonganKalimat}`);
+
+Posisi indeks kata "buruk": 35
+Potongan kalimat: Wah, aplikasi ini s

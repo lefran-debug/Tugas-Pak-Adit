@@ -1,0 +1,7 @@
+let nilaiSiswa = [75, 95, 88, 60, 100, 82, 90];
+
+// Urutkan nilai dari terbesar ke terkecil (descending), lalu ambil 3 teratas
+let top3 = nilaiSiswa.sort((a, b) => b - a).slice(0, 3);
+
+console.log("3 Peringkat Teratas:", top3); 
+// Output: [100, 95, 90]

@@ -1,0 +1,8 @@
+let semuaNilai = [95, 88, 90, 85, 78, 82];
+
+// Menggunakan array destructuring dengan rest syntax (...)
+let [nilaiUtama, ...sisaNilai] = semuaNilai;
+
+// Tampilkan hasil kedua variabel
+console.log("Nilai Utama:", nilaiUtama); // Output: 95
+console.log("Sisa Nilai:", sisaNilai);   // Output: [88, 90, 85, 78, 82]

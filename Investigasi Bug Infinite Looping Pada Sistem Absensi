@@ -1,0 +1,19 @@
+public class PerbaikanAbsensi {
+    public static void main(String[] args) {
+        int flag = 1;
+
+        while (flag < 10) {
+            System.out.println("Iterasi ke-" + flag);
+            flag++; // Menambahkan increment agar kondisi (flag < 10) bisa bernilai false
+        }
+    }
+}
+
+//jika ada perbaikan, maka akan jadi seperti ini:
+
+var flag = 1;
+
+while (flag < 10) {
+    console.log('Iterasi ke-' + flag);
+    flag++; // Tambahkan increment di sini
+}

@@ -1,0 +1,11 @@
+public class StatusToko {
+    public static void main(String[] args) {
+        int jamSekarang = 19; // Ganti angka ini untuk tes (misal: 10 atau 19)
+
+        if (jamSekarang >= 8 && jamSekarang <= 17) {
+            System.out.println("Toko Buka");
+        } else {
+            System.out.println("Toko Tutup");
+        }
+    }
+}

@@ -1,0 +1,8 @@
+public class AntreanBioskop {
+    public static void main(String[] args) {
+        // For-loop dimulai dari 1 hingga 8
+        for (int i = 1; i <= 8; i++) {
+            System.out.println("Tiket antrean nomor: " + i);
+        }
+    }
+}

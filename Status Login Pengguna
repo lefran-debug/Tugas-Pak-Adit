@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Status Login</title>
+</head>
+<body>
+
+    <p id="statusLogin"></p>
+
+    <script>
+        let isLoggedIn = true;
+        let namaUser = "Budi";
+
+        if (isLoggedIn) {
+            document.getElementById("statusLogin").textContent =
+                `Halo, ${namaUser}!`;
+        } else {
+            document.getElementById("statusLogin").textContent =
+                "Silakan Login Terlebih Dahulu";
+        }
+    </script>
+
+</body>
+</html>
+Halo, Budi!
+let isLoggedIn = false;
+Silakan Login Terlebih Dahulu

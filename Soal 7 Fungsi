@@ -1,0 +1,8 @@
+function jalankanHitungMundur(batas) {
+    for (var i = 0; i < batas; i++) {
+        console.log(i);
+    }
+}
+
+// Pengujian fungsi dengan parameter 4
+jalankanHitungMundur(4);

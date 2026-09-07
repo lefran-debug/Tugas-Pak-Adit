@@ -1,0 +1,28 @@
+let totalHarga = 250000;
+
+if (true) {
+    let diskon = 0.2;
+    totalHarga = totalHarga - (totalHarga * diskon);
+
+    console.log(`Harga setelah diskon: ${totalHarga}`);
+}
+
+console.log(diskon);
+
+Harga setelah diskon: 200000
+ReferenceError: diskon is not defined
+
+
+let totalHarga = 250000;
+
+if (true) {
+    var diskon = 0.2;
+    totalHarga = totalHarga - (totalHarga * diskon);
+
+    console.log(`Harga setelah diskon: ${totalHarga}`);
+}
+
+console.log(`Nilai diskon dari luar blok: ${diskon}`);
+
+Harga setelah diskon: 200000
+Nilai diskon dari luar blok: 0.2

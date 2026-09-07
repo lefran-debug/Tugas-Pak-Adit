@@ -1,0 +1,15 @@
+public class StokProduk {
+    public static void main(String[] args) {
+        int stokBarang = 5; // Ganti nilainya untuk tes (misal: 15, 5, atau 0)
+
+        if (stokBarang > 10) {
+            System.out.println("Stok Tersedia");
+        } else if (stokBarang >= 1 && stokBarang <= 10) {
+            System.out.println("Stok Terbatas! Segera Beli");
+        } else if (stokBarang == 0) {
+            System.out.println("Stok Habis");
+        } else {
+            System.out.println("Stok tidak valid");
+        }
+    }
+}

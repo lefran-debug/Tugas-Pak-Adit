@@ -1,0 +1,15 @@
+public class SensorParkir {
+    public static void main(String[] args) {
+        int i = 0; // Inisialisasi awal variabel i
+
+        // While-loop berjalan selama i < 5 (iterasi 0 sampai 4)
+        while (i < 5) {
+            if (i == 3) {
+                System.out.println("Awas Halangan Dekat!");
+            } else {
+                System.out.println("Tahapan iterasi: " + i);
+            }
+            i++; // Increment variabel i
+        }
+    }
+}

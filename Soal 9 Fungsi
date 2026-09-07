@@ -1,0 +1,8 @@
+// Deklarasi Arrow Function ES6
+const konversiIDRkeUSD = (rupiah) => { 
+    return rupiah / 15000; 
+};
+
+// Pengujian fungsi dengan nilai 300000
+const hasilUSD = konversiIDRkeUSD(300000);
+console.log(hasilUSD); // Output: 20

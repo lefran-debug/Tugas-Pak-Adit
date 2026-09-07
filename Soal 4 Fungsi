@@ -1,0 +1,13 @@
+public class KeranjangBelanja {
+    // Fungsi menerima dua parameter dan mengembalikan hasil penjumlahannya
+    public static int jumlahkanBelanja(int hargaBarangA, int hargaBarangB) {
+        return hargaBarangA + hargaBarangB;
+    }
+
+    public static void main(String[] args) {
+        // Menguji fungsi dengan nilai 120000 dan 85000
+        int total = jumlahkanBelanja(120000, 85000);
+        
+        System.out.println("Total Belanja: " + total);
+    }
+}

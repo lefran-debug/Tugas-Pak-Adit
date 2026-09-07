@@ -1,0 +1,16 @@
+let isPasswordCorrect = true;
+let isEmailVerified = true;
+
+let canAccessDashboard = isPasswordCorrect && isEmailVerified;
+
+console.log(`Bisa masuk Dashboard: ${canAccessDashboard}`);
+
+// Skenario jika password salah
+isPasswordCorrect = false;
+
+canAccessDashboard = isPasswordCorrect && isEmailVerified;
+
+console.log(`Bisa masuk Dashboard setelah password salah: ${canAccessDashboard}`);
+
+Bisa masuk Dashboard: true
+Bisa masuk Dashboard setelah password salah: false

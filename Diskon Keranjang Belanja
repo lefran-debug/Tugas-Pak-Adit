@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Diskon Keranjang Belanja</title>
+</head>
+<body>
+
+    <p id="hasilDiskon"></p>
+
+    <script>
+        let totalBelanja = 350000;
+
+        let hasil = totalBelanja > 500000
+            ? "Anda Mendapat Diskon 20%!"
+            : totalBelanja >= 200000
+                ? "Anda Mendapat Diskon 10%!"
+                : "Belanja lebih banyak untuk dapat diskon!";
+
+        document.getElementById("hasilDiskon").textContent = hasil;
+
+        document.getElementById("hasilDiskon").style.color =
+            totalBelanja > 500000
+                ? "purple"
+                : totalBelanja >= 200000
+                    ? "blue"
+                    : "gray";
+    </script>
+
+</body>
+</html>
+
+Anda Mendapat Diskon 10%!
+
+let totalBelanja = 600000;
+
+let totalBelanja = 150000;

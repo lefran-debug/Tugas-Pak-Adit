@@ -1,0 +1,9 @@
+let keranjangA = ["Sepatu", "Baju"];
+let keranjangB = ["Tas", "Topi"];
+
+// Menggabungkan array menggunakan Spread Operator (...) dan menambah item "Jaket"
+let keranjangUtama = [...keranjangA, ...keranjangB, "Jaket"];
+
+// Tampilkan isi keranjangUtama ke console
+console.log(keranjangUtama);
+// Output: ["Sepatu", "Baju", "Tas", "Topi", "Jaket"]

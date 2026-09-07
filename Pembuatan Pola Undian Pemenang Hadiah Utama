@@ -1,0 +1,23 @@
+public class UndianKupon {
+    public static void main(String[] args) {
+        // For-loop dari angka 1 hingga 10
+        for (int kupon = 1; kupon <= 10; kupon++) {
+            // Mengecek apakah nomor kupon habis dibagi 2 menggunakan operator modulus (%)
+            if (kupon % 2 == 0) {
+                System.out.println("Kupon " + kupon + ": Kupon Genap");
+            } else {
+                System.out.println("Kupon " + kupon + ": Kupon Ganjil");
+            }
+        }
+    }
+}
+
+//berikut untuk yg versi web nya
+
+for (let kupon = 1; kupon <= 10; kupon++) {
+    if (kupon % 2 === 0) {
+        console.log(`Kupon ${kupon}: Kupon Genap`);
+    } else {
+        console.log(`Kupon ${kupon}: Kupon Ganjil`);
+    }
+}

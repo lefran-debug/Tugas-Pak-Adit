@@ -1,0 +1,15 @@
+public class CekKelulusan {
+    public static String cekKelulusan(int nilaiUjian) {
+        if (nilaiUjian >= 75) {
+            return "Lulus Kompeten";
+        } else {
+            return "Remedial";
+        }
+    }
+
+    public static void main(String[] args) {
+        // Menguji fungsi dengan nilai 80
+        String status = cekKelulusan(80);
+        System.out.println("Status Siswa: " + status);
+    }
+}

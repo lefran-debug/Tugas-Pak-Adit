@@ -1,0 +1,6 @@
+let transaksi = [1000, 2500, 3200, 4100, 5000];
+
+// Ambil sebagian data dari indeks 1 hingga sebelum indeks 4
+let sampelData = transaksi.slice(1, 4);
+
+console.log(sampelData); // Output: [2500, 3200, 4100]

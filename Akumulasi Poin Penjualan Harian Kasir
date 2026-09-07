@@ -1,0 +1,11 @@
+public class AkumulasiPoin {
+    public static void main(String[] args) {
+        int jumlah = 0; // Variabel akumulator untuk menyimpan total poin
+
+        // For-loop variabel 'deret' dari 5 turun hingga lebih besar dari 0
+        for (int deret = 5; deret > 0; deret--) {
+            jumlah += deret; // Menambahkan nilai deret ke dalam jumlah
+            System.out.println("Sisa kupon: " + deret + " | Total poin saat ini: " + jumlah);
+        }
+    }
+}

@@ -1,0 +1,14 @@
+public class KodeVerifikasi {
+    // Fungsi mengembalikan nilai integer 404
+    public static int dapatkanKodeUnik() {
+        return 404;
+    }
+
+    public static void main(String[] args) {
+        // Menampung hasil pemanggilan fungsi ke dalam variabel
+        int kode = dapatkanKodeUnik();
+        
+        // Mencetak ke console
+        System.out.println("Kode Verifikasi: " + kode);
+    }
+}

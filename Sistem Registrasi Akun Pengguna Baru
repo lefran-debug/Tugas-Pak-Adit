@@ -1,1 +1,5 @@
+let firstName = "Budi";
+let lastName = "Santoso";
+const isAktif = true;
 
+console.log(`Akun atas nama ${firstName} ${lastName} status aktif: ${isAktif}`);

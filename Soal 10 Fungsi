@@ -1,0 +1,9 @@
+// Fungsi menggunakan Rest Parameter (...rest) dan Destructuring
+const formatNamaLengkap = (...rest) => { 
+    let [depan, belakang] = rest; 
+    return `${depan} ${belakang}`; 
+};
+
+// Pengujian fungsi dengan argumen "Siti", "Aisyah"
+const namaLengkap = formatNamaLengkap("Siti", "Aisyah");
+console.log(namaLengkap); // Output: Siti Aisyah

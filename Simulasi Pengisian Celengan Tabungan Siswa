@@ -1,0 +1,13 @@
+public class TabunganSiswa {
+    public static void main(String[] args) {
+        int deret = 4;
+        int jumlah = 0; // Variabel akumulator total tabungan
+
+        // While-loop selama deret > 0
+        while (deret > 0) {
+            jumlah += deret; // Penjumlahan nilai deret ke variabel jumlah
+            System.out.println("Sisa hari: " + deret + " | Jumlah tabungan saat ini: " + jumlah);
+            deret--; // Pengurangan nilai deret
+        }
+    }
+}

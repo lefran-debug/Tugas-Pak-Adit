@@ -1,0 +1,12 @@
+let antreanVaksin = [];
+
+// Masukkan elemen menggunakan .push()
+antreanVaksin.push("Andi");
+antreanVaksin.push("Budi");
+antreanVaksin.push("Siti");
+
+// Keluarkan elemen paling belakang menggunakan .pop()
+antreanVaksin.pop(); // "Siti" dikeluarkan
+
+// Tampilkan kondisi akhir array
+console.log(antreanVaksin); // Output: ["Andi", "Budi"]

@@ -1,0 +1,12 @@
+public class FilterPeringatan {
+    public static void main(String[] args) {
+        // For-loop dari i = 0 hingga i <= 6
+        for (int i = 0; i <= 6; i++) {
+            if (i == 3) {
+                System.out.println("Peringatan: Suhu Mesin Stabil!");
+            } else {
+                System.out.println(i);
+            }
+        }
+    }
+}

@@ -1,0 +1,1100 @@
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  FlatList,
+  StyleSheet,
+  SafeAreaView,
+  StatusBar,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Alert,
+  Linking,
+  Image,
+} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// ============ DATA ============
+const AVATARS = ['👤', '🐱', '🐶', '🦊', '🐼', '🦁', '🐯', '🐸', '🐵', '🦄'];
+const DEFAULT_BIO = 'Freelancer • Siap Kerja';
+
+const STATUSES = [
+  { key: 'applied', label: 'Applied', emoji: '🟡', color: '#F59E0B' },
+  { key: 'interview', label: 'Interview', emoji: '🟢', color: '#10B981' },
+  { key: 'offer', label: 'Offer', emoji: '🔵', color: '#3B82F6' },
+  { key: 'reject', label: 'Reject', emoji: '🔴', color: '#EF4444' },
+];
+
+const FILTERS = [
+  { key: 'all', label: 'Semua' },
+  { key: 'applied', label: 'Applied' },
+  { key: 'interview', label: 'Interview' },
+  { key: 'offer', label: 'Offer' },
+  { key: 'reject', label: 'Reject' },
+];
+
+const BADGES = [
+  { id: 1, emoji: '🥉', name: 'Pemula', min: 1 },
+  { id: 2, emoji: '🥈', name: 'Produktif', min: 3 },
+  { id: 3, emoji: '🥇', name: 'Rajin', min: 5 },
+  { id: 4, emoji: '💎', name: 'Pro', min: 10 },
+];
+
+const TIPS = [
+  { id: 1, title: 'Bangun portfolio', desc: 'Portfolio itu CV kedua kamu, bikin yang rapi' },
+  { id: 2, title: 'Aktif di LinkedIn', desc: 'Update profil, connect sama recruiter' },
+  { id: 3, title: 'Follow up 1 minggu', desc: 'Follow up sopan kalau gak ada kabar' },
+  { id: 4, title: 'Custom cover letter', desc: 'Sesuaikan tiap lamaran, jangan template' },
+  { id: 5, title: 'Jangan takut reject', desc: 'Reject itu biasa, terus apply yang lain' },
+];
+
+const SOCIALS = [
+  {
+    id: 1,
+    name: 'Instagram',
+    handle: '@its_4ruu',
+    url: 'https://instagram.com/its_4ruu',
+    logo: 'https://cdn-icons-png.flaticon.com/512/174/174855.png',
+  },
+  {
+    id: 2,
+    name: 'TikTok',
+    handle: '@lunoxityz',
+    url: 'https://tiktok.com/@lunoxityz',
+    logo: 'https://cdn-icons-png.flaticon.com/512/3046/3046121.png',
+  },
+  {
+    id: 3,
+    name: 'Email',
+    handle: 'alleluialw@gmail.com',
+    url: 'mailto:alleluialw@gmail.com',
+    logo: 'https://cdn-icons-png.flaticon.com/512/732/732200.png',
+  },
+];
+
+const TABS = [
+  { key: 'jobs', emoji: '💼', label: 'Lamaran' },
+  { key: 'badge', emoji: '⭐', label: 'Achieve' },
+  { key: 'tips', emoji: '💡', label: 'Tips' },
+  { key: 'social', emoji: '👤', label: 'Profile' },
+];
+
+export default function App() {
+  const [screen, setScreen] = useState('loading');
+  const [user, setUser] = useState(null);
+  const [jobs, setJobs] = useState([]);
+  const [posisi, setPosisi] = useState('');
+  const [perusahaan, setPerusahaan] = useState('');
+  const [filter, setFilter] = useState('all');
+
+  // Auth
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  // Edit profile
+  const [editName, setEditName] = useState('');
+  const [editBio, setEditBio] = useState('');
+  const [editAvatar, setEditAvatar] = useState('👤');
+
+  useEffect(() => {
+    checkSession();
+  }, []);
+
+  useEffect(() => {
+    if (user) loadJobs();
+  }, [user]);
+
+  useEffect(() => {
+    if (user) saveJobs();
+  }, [jobs]);
+
+  const checkSession = async () => {
+    try {
+      const session = await AsyncStorage.getItem('session');
+      if (session) {
+        const userData = JSON.parse(session);
+        userData.bio = userData.bio || DEFAULT_BIO;
+        userData.avatar = userData.avatar || '👤';
+        setUser(userData);
+        setScreen('jobs');
+      } else {
+        setScreen('login');
+      }
+    } catch {
+      setScreen('login');
+    }
+  };
+
+  const loadJobs = async () => {
+    try {
+      const data = await AsyncStorage.getItem(`jobs_${user.email}`);
+      if (data) setJobs(JSON.parse(data));
+    } catch {}
+  };
+
+  const saveJobs = async () => {
+    if (!user) return;
+    await AsyncStorage.setItem(`jobs_${user.email}`, JSON.stringify(jobs));
+  };
+
+  // ============ AUTH ============
+  const handleRegister = async () => {
+    if (!name.trim() || !email.trim() || !password.trim()) {
+      Alert.alert('Error', 'Semua field wajib diisi');
+      return;
+    }
+    if (password.length < 6) {
+      Alert.alert('Error', 'Password minimal 6 karakter');
+      return;
+    }
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Konfirmasi password tidak cocok');
+      return;
+    }
+    if (!email.includes('@')) {
+      Alert.alert('Error', 'Format email tidak valid');
+      return;
+    }
+
+    try {
+      const usersData = await AsyncStorage.getItem('users');
+      const users = usersData ? JSON.parse(usersData) : [];
+
+      if (users.find((u) => u.email === email.toLowerCase())) {
+        Alert.alert('Error', 'Email sudah terdaftar');
+        return;
+      }
+
+      users.push({
+        name,
+        email: email.toLowerCase(),
+        password,
+        bio: DEFAULT_BIO,
+        avatar: '👤',
+      });
+      await AsyncStorage.setItem('users', JSON.stringify(users));
+
+      Alert.alert('Sukses', 'Akun berhasil dibuat! Silakan login.');
+      setScreen('login');
+      setEmail('');
+      setPassword('');
+      setName('');
+      setConfirmPassword('');
+    } catch {
+      Alert.alert('Error', 'Gagal daftar');
+    }
+  };
+
+  const handleLogin = async () => {
+    if (!email.trim() || !password.trim()) {
+      Alert.alert('Error', 'Email & password wajib diisi');
+      return;
+    }
+
+    try {
+      const usersData = await AsyncStorage.getItem('users');
+      const users = usersData ? JSON.parse(usersData) : [];
+
+      const found = users.find(
+        (u) => u.email === email.toLowerCase() && u.password === password
+      );
+
+      if (!found) {
+        Alert.alert('Error', 'Email atau password salah');
+        return;
+      }
+
+      found.bio = found.bio || DEFAULT_BIO;
+      found.avatar = found.avatar || '👤';
+
+      await AsyncStorage.setItem('session', JSON.stringify(found));
+      setUser(found);
+      setScreen('jobs');
+      setEmail('');
+      setPassword('');
+    } catch {
+      Alert.alert('Error', 'Gagal login');
+    }
+  };
+
+  const handleLogout = () => {
+    Alert.alert('Logout', 'Yakin mau keluar?', [
+      { text: 'Batal', style: 'cancel' },
+      {
+        text: 'Logout',
+        style: 'destructive',
+        onPress: async () => {
+          await AsyncStorage.removeItem('session');
+          setUser(null);
+          setJobs([]);
+          setScreen('login');
+        },
+      },
+    ]);
+  };
+
+  // ============ EDIT PROFILE ============
+  const openEditProfile = () => {
+    setEditName(user?.name || '');
+    setEditBio(user?.bio || DEFAULT_BIO);
+    setEditAvatar(user?.avatar || '👤');
+    setScreen('editProfile');
+  };
+
+  const handleSaveProfile = async () => {
+    if (!editName.trim()) {
+      Alert.alert('Error', 'Nama tidak boleh kosong');
+      return;
+    }
+
+    try {
+      const updatedUser = {
+        ...user,
+        name: editName.trim(),
+        bio: editBio.trim() || DEFAULT_BIO,
+        avatar: editAvatar,
+      };
+
+      await AsyncStorage.setItem('session', JSON.stringify(updatedUser));
+
+      const usersData = await AsyncStorage.getItem('users');
+      const users = usersData ? JSON.parse(usersData) : [];
+      const idx = users.findIndex((u) => u.email === user.email);
+      if (idx !== -1) {
+        users[idx] = updatedUser;
+        await AsyncStorage.setItem('users', JSON.stringify(users));
+      }
+
+      setUser(updatedUser);
+      Alert.alert('Sukses', 'Profile berhasil diupdate!');
+      setScreen('social');
+    } catch {
+      Alert.alert('Error', 'Gagal simpan profile');
+    }
+  };
+
+  // ============ JOBS ============
+  const addJob = () => {
+    if (!posisi.trim() || !perusahaan.trim()) {
+      Alert.alert('Error', 'Posisi & perusahaan wajib diisi');
+      return;
+    }
+    const newJob = {
+      id: Date.now().toString(),
+      posisi: posisi.trim(),
+      perusahaan: perusahaan.trim(),
+      status: 'applied',
+      date: new Date().toLocaleDateString('id-ID', {
+        day: 'numeric',
+        month: 'short',
+      }),
+    };
+    setJobs([newJob, ...jobs]);
+    setPosisi('');
+    setPerusahaan('');
+  };
+
+  const cycleStatus = (id) => {
+    setJobs(
+      jobs.map((j) => {
+        if (j.id !== id) return j;
+        const idx = STATUSES.findIndex((s) => s.key === j.status);
+        const next = STATUSES[(idx + 1) % STATUSES.length];
+        return { ...j, status: next.key };
+      })
+    );
+  };
+
+  const deleteJob = (id) => {
+    Alert.alert('Hapus', 'Yakin hapus lamaran ini?', [
+      { text: 'Batal', style: 'cancel' },
+      {
+        text: 'Hapus',
+        style: 'destructive',
+        onPress: () => setJobs(jobs.filter((j) => j.id !== id)),
+      },
+    ]);
+  };
+
+  const getStatus = (key) => STATUSES.find((s) => s.key === key) || STATUSES[0];
+
+  const filteredJobs =
+    filter === 'all' ? jobs : jobs.filter((j) => j.status === filter);
+
+  const totalLamaran = jobs.length;
+  const totalOffer = jobs.filter((j) => j.status === 'offer').length;
+  const totalInterview = jobs.filter((j) => j.status === 'interview').length;
+
+  // ============ LOGIN SCREEN ============
+  if (screen === 'login') {
+    return (
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="dark-content" />
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.authContainer}
+        >
+          <Text style={styles.authTitle}>💼 Freelance Tracker</Text>
+          <Text style={styles.authSubtitle}>Login dulu yuk</Text>
+
+          <Text style={styles.label}>📧 Email</Text>
+          <TextInput
+            style={styles.inputAuth}
+            placeholder="nama@email.com"
+            placeholderTextColor="#999"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+
+          <Text style={styles.label}>🔒 Password</Text>
+          <TextInput
+            style={styles.inputAuth}
+            placeholder="••••••••"
+            placeholderTextColor="#999"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
+
+          <TouchableOpacity style={styles.btnPrimary} onPress={handleLogin}>
+            <Text style={styles.btnPrimaryText}>LOGIN</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.linkBtn}
+            onPress={() => setScreen('register')}
+          >
+            <Text style={styles.linkText}>
+              Belum punya akun? <Text style={styles.linkBold}>Register</Text>
+            </Text>
+          </TouchableOpacity>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    );
+  }
+
+  // ============ REGISTER SCREEN ============
+  if (screen === 'register') {
+    return (
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="dark-content" />
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.authContainer}
+        >
+          <Text style={styles.authTitle}>📝 Daftar Akun</Text>
+          <Text style={styles.authSubtitle}>Isi data diri kamu</Text>
+
+          <Text style={styles.label}>👤 Nama</Text>
+          <TextInput
+            style={styles.inputAuth}
+            placeholder="Nama lengkap"
+            placeholderTextColor="#999"
+            value={name}
+            onChangeText={setName}
+          />
+
+          <Text style={styles.label}>📧 Email</Text>
+          <TextInput
+            style={styles.inputAuth}
+            placeholder="nama@email.com"
+            placeholderTextColor="#999"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+
+          <Text style={styles.label}>🔒 Password</Text>
+          <TextInput
+            style={styles.inputAuth}
+            placeholder="Minimal 6 karakter"
+            placeholderTextColor="#999"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
+
+          <Text style={styles.label}>🔒 Konfirmasi Password</Text>
+          <TextInput
+            style={styles.inputAuth}
+            placeholder="Ulangi password"
+            placeholderTextColor="#999"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry
+          />
+
+          <TouchableOpacity style={styles.btnPrimary} onPress={handleRegister}>
+            <Text style={styles.btnPrimaryText}>DAFTAR</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.linkBtn}
+            onPress={() => setScreen('login')}
+          >
+            <Text style={styles.linkText}>
+              Udah punya akun? <Text style={styles.linkBold}>Login</Text>
+            </Text>
+          </TouchableOpacity>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    );
+  }
+
+  // ============ EDIT PROFILE ============
+  if (screen === 'editProfile') {
+    return (
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="dark-content" />
+        <ScrollView
+          style={styles.screen}
+          contentContainerStyle={{ paddingBottom: 40 }}
+          showsVerticalScrollIndicator={false}
+        >
+          <TouchableOpacity
+            style={styles.backBtn}
+            onPress={() => setScreen('social')}
+          >
+            <Text style={styles.backText}>← Kembali</Text>
+          </TouchableOpacity>
+
+          <Text style={styles.title}>✏️ Edit Profile</Text>
+          <Text style={styles.subtitle}>Ubah data diri kamu</Text>
+
+          <Text style={styles.sectionTitle}>Pilih Avatar</Text>
+          <View style={styles.avatarGrid}>
+            {AVATARS.map((emoji) => {
+              const selected = editAvatar === emoji;
+              return (
+                <TouchableOpacity
+                  key={emoji}
+                  style={[
+                    styles.avatarOption,
+                    selected && styles.avatarOptionSelected,
+                  ]}
+                  onPress={() => setEditAvatar(emoji)}
+                >
+                  <Text style={styles.avatarOptionText}>{emoji}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+
+          <Text style={styles.label}>👤 Nama</Text>
+          <TextInput
+            style={styles.inputAuth}
+            placeholder="Nama lengkap"
+            placeholderTextColor="#999"
+            value={editName}
+            onChangeText={setEditName}
+          />
+
+          <Text style={styles.label}>📝 Bio</Text>
+          <TextInput
+            style={styles.inputAuth}
+            placeholder="Contoh: Freelance Web Developer"
+            placeholderTextColor="#999"
+            value={editBio}
+            onChangeText={setEditBio}
+          />
+
+          <TouchableOpacity
+            style={styles.btnPrimary}
+            onPress={handleSaveProfile}
+          >
+            <Text style={styles.btnPrimaryText}>SIMPAN</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </SafeAreaView>
+    );
+  }
+
+  // ============ JOBS SCREEN ============
+  const renderJobs = () => (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.screen}
+    >
+      <View style={styles.headerRow}>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.title}>💼 LAMARAN SAYA</Text>
+          <Text style={styles.subtitle}>
+            {totalLamaran} lamaran • {totalOffer} offer
+          </Text>
+        </View>
+        <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
+          <Text style={styles.logoutText}>Logout</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.formCard}>
+        <TextInput
+          style={styles.inputJob}
+          placeholder="Posisi (cth: Frontend Dev)"
+          placeholderTextColor="#999"
+          value={posisi}
+          onChangeText={setPosisi}
+        />
+        <TextInput
+          style={styles.inputJob}
+          placeholder="Perusahaan (cth: PT Maju)"
+          placeholderTextColor="#999"
+          value={perusahaan}
+          onChangeText={setPerusahaan}
+        />
+        <TouchableOpacity style={styles.addJobBtn} onPress={addJob}>
+          <Text style={styles.addJobText}>+ TAMBAH LAMARAN</Text>
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={{ marginBottom: 12, maxHeight: 40 }}
+      >
+        {FILTERS.map((f) => {
+          const active = filter === f.key;
+          return (
+            <TouchableOpacity
+              key={f.key}
+              style={[styles.chip, active && styles.chipActive]}
+              onPress={() => setFilter(f.key)}
+            >
+              <Text
+                style={[styles.chipText, active && styles.chipTextActive]}
+              >
+                {f.label}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
+
+      <FlatList
+        data={filteredJobs}
+        keyExtractor={(item) => item.id}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 20 }}
+        renderItem={({ item }) => {
+          const st = getStatus(item.status);
+          return (
+            <View
+              style={[styles.jobCard, { borderLeftColor: st.color }]}
+            >
+              <View style={{ flex: 1 }}>
+                <Text style={styles.jobPosisi}>{item.posisi}</Text>
+                <Text style={styles.jobPerusahaan}>{item.perusahaan}</Text>
+                <View style={styles.jobStatusRow}>
+                  <View
+                    style={[
+                      styles.jobStatusDot,
+                      { backgroundColor: st.color },
+                    ]}
+                  />
+                  <Text style={[styles.jobStatus, { color: st.color }]}>
+                    {st.label}
+                  </Text>
+                  <Text style={styles.jobDate}>• {item.date}</Text>
+                </View>
+              </View>
+              <TouchableOpacity
+                style={styles.jobActionBtn}
+                onPress={() => cycleStatus(item.id)}
+              >
+                <Text style={styles.jobActionText}>🔄</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.jobActionBtn, styles.jobDeleteBtn]}
+                onPress={() => deleteJob(item.id)}
+              >
+                <Text style={styles.jobActionText}>🗑️</Text>
+              </TouchableOpacity>
+            </View>
+          );
+        }}
+        ListEmptyComponent={
+          <View style={styles.emptyBox}>
+            <Text style={styles.emptyIcon}>📋</Text>
+            <Text style={styles.emptyTitle}>Belum ada lamaran</Text>
+            <Text style={styles.emptyText}>
+              Tambah lamaran pertama kamu!
+            </Text>
+          </View>
+        }
+      />
+    </KeyboardAvoidingView>
+  );
+
+  // ============ BADGE SCREEN ============
+  const renderBadge = () => (
+    <ScrollView
+      style={styles.screen}
+      contentContainerStyle={{ paddingBottom: 20 }}
+      showsVerticalScrollIndicator={false}
+    >
+      <Text style={styles.title}>⭐ Achievement</Text>
+      <Text style={styles.subtitle}>
+        Total lamaran: {totalLamaran} • Interview: {totalInterview}
+      </Text>
+
+      {BADGES.map((badge) => {
+        const unlocked = totalLamaran >= badge.min;
+        return (
+          <View
+            key={badge.id}
+            style={[styles.badgeCard, !unlocked && styles.badgeLocked]}
+          >
+            <Text style={[styles.badgeEmoji, !unlocked && { opacity: 0.25 }]}>
+              {badge.emoji}
+            </Text>
+            <View style={{ flex: 1, marginLeft: 16 }}>
+              <Text style={[styles.badgeName, !unlocked && { color: '#bbb' }]}>
+                {badge.name}
+              </Text>
+              <Text style={styles.badgeReq}>
+                {unlocked ? '✅ Terbuka!' : `Kirim ${badge.min} lamaran`}
+              </Text>
+            </View>
+            {unlocked && <Text style={styles.unlockedMark}>✓</Text>}
+          </View>
+        );
+      })}
+    </ScrollView>
+  );
+
+  // ============ TIPS SCREEN ============
+  const renderTips = () => (
+    <ScrollView
+      style={styles.screen}
+      contentContainerStyle={{ paddingBottom: 20 }}
+      showsVerticalScrollIndicator={false}
+    >
+      <Text style={styles.title}>💡 Tips Freelancer</Text>
+      <Text style={styles.subtitle}>Biar cepet dapet kerja</Text>
+
+      <Text style={styles.sectionTitle}>📌 Tips Cari Kerja</Text>
+      {TIPS.map((tip, index) => (
+        <View key={tip.id} style={styles.tipCard}>
+          <View style={styles.tipNumber}>
+            <Text style={styles.tipNumberText}>{index + 1}</Text>
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.tipTitle}>{tip.title}</Text>
+            <Text style={styles.tipDesc}>{tip.desc}</Text>
+          </View>
+        </View>
+      ))}
+    </ScrollView>
+  );
+
+  // ============ SOCIAL SCREEN ============
+  const renderSocial = () => (
+    <ScrollView
+      style={styles.screen}
+      contentContainerStyle={{ paddingBottom: 20 }}
+      showsVerticalScrollIndicator={false}
+    >
+      <View style={styles.headerRow}>
+        <Text style={styles.title}>👤 Profile</Text>
+        <TouchableOpacity style={styles.editBtn} onPress={openEditProfile}>
+          <Text style={styles.editBtnText}>✏️ Edit</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.profileCard}>
+        <View style={styles.avatar}>
+          <Text style={styles.avatarEmoji}>{user?.avatar || '👤'}</Text>
+        </View>
+        <View style={{ flex: 1, marginLeft: 16 }}>
+          <Text style={styles.profileName}>{user?.name || 'User'}</Text>
+          <Text style={styles.profileEmail}>{user?.email || '-'}</Text>
+          <Text style={styles.profileBio}>{user?.bio || DEFAULT_BIO}</Text>
+        </View>
+      </View>
+
+      <View style={styles.statRow}>
+        <View style={styles.statBox}>
+          <Text style={styles.statNumber}>{totalLamaran}</Text>
+          <Text style={styles.statLabel}>Lamaran</Text>
+        </View>
+        <View style={styles.statBox}>
+          <Text style={styles.statNumber}>{totalInterview}</Text>
+          <Text style={styles.statLabel}>Interview</Text>
+        </View>
+        <View style={styles.statBox}>
+          <Text style={styles.statNumber}>{totalOffer}</Text>
+          <Text style={styles.statLabel}>Offer</Text>
+        </View>
+      </View>
+
+      <Text style={styles.sectionTitle}>🔗 Sosmed</Text>
+      {SOCIALS.map((social) => (
+        <TouchableOpacity
+          key={social.id}
+          style={styles.socialCard}
+          onPress={() => Linking.openURL(social.url)}
+        >
+          <Image
+            source={{ uri: social.logo }}
+            style={styles.socialLogo}
+            resizeMode="contain"
+          />
+          <View style={{ flex: 1, marginLeft: 12 }}>
+            <Text style={styles.socialName}>{social.name}</Text>
+            <Text style={styles.socialHandle}>{social.handle}</Text>
+          </View>
+          <Text style={styles.socialArrow}>›</Text>
+        </TouchableOpacity>
+      ))}
+    </ScrollView>
+  );
+
+  const renderScreen = () => {
+    if (screen === 'badge') return renderBadge();
+    if (screen === 'tips') return renderTips();
+    if (screen === 'social') return renderSocial();
+    return renderJobs();
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" />
+      <View style={{ flex: 1 }}>{renderScreen()}</View>
+
+      <View style={styles.tabBar}>
+        {TABS.map((tab) => {
+          const active = screen === tab.key;
+          return (
+            <TouchableOpacity
+              key={tab.key}
+              style={styles.tabItem}
+              onPress={() => setScreen(tab.key)}
+            >
+              <Text style={[styles.tabEmoji, active && styles.tabEmojiActive]}>
+                {tab.emoji}
+              </Text>
+              <Text style={[styles.tabLabel, active && styles.tabLabelActive]}>
+                {tab.label}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#fff' },
+  screen: { flex: 1, paddingHorizontal: 24, paddingTop: 16 },
+
+  authContainer: {
+    flex: 1,
+    paddingHorizontal: 24,
+    justifyContent: 'center',
+  },
+  authTitle: { fontSize: 28, fontWeight: 'bold', color: '#333' },
+  authSubtitle: { fontSize: 14, color: '#999', marginTop: 4, marginBottom: 24 },
+  label: {
+    fontSize: 13,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 6,
+    marginTop: 16,
+  },
+  inputAuth: {
+    height: 48,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    fontSize: 14,
+    color: '#333',
+    backgroundColor: '#fff',
+  },
+  btnPrimary: {
+    backgroundColor: '#4CAF50',
+    height: 52,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 24,
+  },
+  btnPrimaryText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+    letterSpacing: 1,
+  },
+  linkBtn: { alignItems: 'center', marginTop: 20 },
+  linkText: { fontSize: 13, color: '#666' },
+  linkBold: { color: '#4CAF50', fontWeight: 'bold' },
+
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 16,
+  },
+  logoutBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    backgroundColor: '#FFEBEE',
+  },
+  logoutText: { fontSize: 12, color: '#E53935', fontWeight: 'bold' },
+  editBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    backgroundColor: '#E8F5E9',
+  },
+  editBtnText: { fontSize: 12, color: '#4CAF50', fontWeight: 'bold' },
+  backBtn: { marginBottom: 12 },
+  backText: { fontSize: 15, color: '#4CAF50', fontWeight: '600' },
+
+  title: { fontSize: 26, fontWeight: 'bold', color: '#333' },
+  subtitle: { fontSize: 13, color: '#999', marginTop: 4, marginBottom: 16 },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 12,
+    marginTop: 8,
+  },
+
+  avatarGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+    marginBottom: 8,
+  },
+  avatarOption: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F3F4F6',
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  avatarOptionSelected: {
+    borderColor: '#4CAF50',
+    backgroundColor: '#E8F5E9',
+  },
+  avatarOptionText: { fontSize: 28 },
+
+  formCard: {
+    backgroundColor: '#F8F9FB',
+    padding: 12,
+    borderRadius: 12,
+    marginBottom: 12,
+    gap: 8,
+  },
+  inputJob: {
+    height: 44,
+    paddingHorizontal: 14,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    fontSize: 14,
+    color: '#333',
+    backgroundColor: '#fff',
+  },
+  addJobBtn: {
+    backgroundColor: '#4CAF50',
+    height: 44,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  addJobText: { color: '#fff', fontSize: 13, fontWeight: 'bold' },
+
+  chip: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: '#F3F4F6',
+    marginRight: 8,
+    height: 34,
+    justifyContent: 'center',
+  },
+  chipActive: { backgroundColor: '#4CAF50' },
+  chipText: { fontSize: 12, color: '#666', fontWeight: '600' },
+  chipTextActive: { color: '#fff' },
+
+  jobCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: 16,
+    paddingLeft: 20,
+    borderRadius: 12,
+    marginBottom: 12,
+    borderLeftWidth: 4,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  jobPosisi: { fontSize: 15, fontWeight: 'bold', color: '#333' },
+  jobPerusahaan: { fontSize: 13, color: '#666', marginTop: 2 },
+  jobStatusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  jobStatusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 6,
+  },
+  jobStatus: { fontSize: 12, fontWeight: 'bold' },
+  jobDate: { fontSize: 12, color: '#999', marginLeft: 4 },
+  jobActionBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#F3F4F6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 6,
+  },
+  jobDeleteBtn: { backgroundColor: '#FFEBEE' },
+  jobActionText: { fontSize: 16 },
+
+  emptyBox: { alignItems: 'center', marginTop: 60 },
+  emptyIcon: { fontSize: 48, marginBottom: 12 },
+  emptyTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#666',
+    marginBottom: 4,
+  },
+  emptyText: { fontSize: 13, color: '#999' },
+
+  badgeCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 12,
+    marginBottom: 12,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  badgeLocked: { backgroundColor: '#fafafa' },
+  badgeEmoji: { fontSize: 44 },
+  badgeName: { fontSize: 18, fontWeight: 'bold', color: '#333' },
+  badgeReq: { fontSize: 13, color: '#999', marginTop: 4 },
+  unlockedMark: { fontSize: 24, color: '#4CAF50', fontWeight: 'bold' },
+
+  tipCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 12,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  tipNumber: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#E8F5E9',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  tipNumberText: { fontSize: 16, fontWeight: 'bold', color: '#4CAF50' },
+  tipTitle: { fontSize: 15, fontWeight: 'bold', color: '#333' },
+  tipDesc: { fontSize: 13, color: '#666', marginTop: 4 },
+
+  profileCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFF7E6',
+    padding: 20,
+    borderRadius: 12,
+    marginBottom: 16,
+  },
+  avatar: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  avatarEmoji: { fontSize: 40 },
+  profileName: { fontSize: 20, fontWeight: 'bold', color: '#333' },
+  profileEmail: { fontSize: 12, color: '#999', marginTop: 2 },
+  profileBio: { fontSize: 13, color: '#666', marginTop: 4 },
+
+  statRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginBottom: 20,
+  },
+  statBox: {
+    flex: 1,
+    backgroundColor: '#F8F9FB',
+    padding: 14,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  statNumber: { fontSize: 22, fontWeight: 'bold', color: '#4CAF50' },
+  statLabel: { fontSize: 11, color: '#666', marginTop: 4 },
+
+  socialCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 12,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  socialLogo: { width: 32, height: 32 },
+  socialName: { fontSize: 15, fontWeight: 'bold', color: '#333' },
+  socialHandle: { fontSize: 13, color: '#999', marginTop: 2 },
+  socialArrow: { fontSize: 24, color: '#ccc', fontWeight: 'bold' },
+
+  tabBar: {
+    flexDirection: 'row',
+    borderTopWidth: 1,
+    borderTopColor: '#E5E7EB',
+    backgroundColor: '#fff',
+    paddingVertical: 8,
+    paddingBottom: Platform.OS === 'ios' ? 24 : 12,
+  },
+  tabItem: { flex: 1, alignItems: 'center', paddingVertical: 4 },
+  tabEmoji: { fontSize: 22, opacity: 0.4 },
+  tabEmojiActive: { opacity: 1 },
+  tabLabel: { fontSize: 11, color: '#999', marginTop: 2 },
+  tabLabelActive: { color: '#4CAF50', fontWeight: 'bold' },
+});
